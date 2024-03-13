@@ -24,7 +24,7 @@ z == z:  { == (4, 4) }
 destruct Foo 5 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], copy [4 -> 5]
 destruct Foo 4 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], == (4, 5), == (4, 4)
 destruct Foo 3 with bar = 122 which saw: copy [0 -> 3], move [3 -> 3]
-(destruct Foo 4 with bar = 122 which saw: copy [0 -> 4] -- moved)
-(destruct Foo 3 with bar = 122 which saw: copy [0 -> 3] -- moved)
+(destruct Foo 4 with bar = 122 which saw:  -- moved)
+(destruct Foo 3 with bar = 122 which saw:  -- moved)
 destruct Foo 0 with bar = 122 which saw: move= [0 -> (2)0]
 (destruct Foo 0 with bar = 122 which saw:  -- moved)

@@ -29,6 +29,9 @@ Moves need the following:
 
 ## Random details
 
+- Need to transfer all fields explicitly in the custom
+  implementations, and not to forget to do so with `std::move`.
+
 - Assignment overloads should return a (normal) reference to the
   assigned-to location (`*this`) for chaining (e.g. `auto a = b = c;`).
 

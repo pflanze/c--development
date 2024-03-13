@@ -65,7 +65,7 @@ Foo::~Foo() {
 }
 
 // Requires `new_id` in scope; either copy it from the old obj, or from `id_counter++`.
-#define EVENT_FROM(msg)                                                 \
+#define EVENT_FROM(msg, perhaps_move)                                   \
     ({                                                                  \
         auto m = STRING(msg << " [" << other.id_ << " -> "              \
                         << new_id << "]");                              \
@@ -73,7 +73,7 @@ Foo::~Foo() {
                                                                         \
         id_ = new_id;                                                   \
         bar_ = other.bar_;                                              \
-        track_ = other.track_;                                          \
+        track_ = perhaps_move(other.track_);                            \
         moved = false;                                                  \
                                                                         \
         if (track_.length()) {                                          \
@@ -83,7 +83,7 @@ Foo::~Foo() {
     })
 
 // Also show object that is being overwritten, for `operator=`
-#define EVENT_FROMTO(msg)                                               \
+#define EVENT_FROMTO(msg, perhaps_move)                                 \
     ({                                                                  \
         auto m = STRING(msg << " [" << other.id_ << " -> "              \
                         << "(" << id_ << ")"                            \
@@ -92,7 +92,7 @@ Foo::~Foo() {
                                                                         \
         id_ = new_id;                                                   \
         bar_ = other.bar_;                                              \
-        track_ = other.track_;                                          \
+        track_ = perhaps_move(other.track_);                            \
         moved = false;                                                  \
                                                                         \
         if (track_.length()) {                                          \
@@ -114,13 +114,13 @@ Foo::~Foo() {
 
 Foo::Foo(Foo& other) noexcept {
     auto new_id = id_counter++;
-    EVENT_FROM("copy");
+    EVENT_FROM("copy",);
 }
 
 Foo::Foo(Foo&& other) noexcept {
     assert(! other.moved);
     auto new_id = other.id_;
-    EVENT_FROM("move");
+    EVENT_FROM("move", std::move);
     other.moved = true;
 }
 
@@ -128,7 +128,7 @@ Foo::Foo(Foo&& other) noexcept {
 Foo& Foo::operator=(Foo& other) noexcept {
     destruct();
     auto new_id = id_counter++;
-    EVENT_FROMTO("copy=");
+    EVENT_FROMTO("copy=",);
     return *this;
 }
 #endif
@@ -138,7 +138,7 @@ Foo& Foo::operator=(Foo&& other) noexcept {
     // this->~Foo(); -- no good, since (as ASAN seems to indicate) the string is then freed twice
     destruct();
     auto new_id = other.id_;
-    EVENT_FROMTO("move=");
+    EVENT_FROMTO("move=", std::move);
     other.moved = true;
     return *this;
 }
@@ -185,8 +185,8 @@ int main() {
     // z0; // destruct Foo 5 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], copy [4 -> 5]
     // z; // <- x3 // destruct Foo 4 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], == (4, 5), == (4, 4)
     // z2; // <- x2 // destruct Foo 3 with bar = 122 which saw: copy [0 -> 3], move [3 -> 3]
-    // x3; // (destruct Foo 4 with bar = 122 which saw: copy [0 -> 4] -- moved)
-    // x2; // (destruct Foo 3 with bar = 122 which saw: copy [0 -> 3] -- moved)
+    // x3; // (destruct Foo 4 with bar = 122 which saw: -- moved)
+    // x2; // (destruct Foo 3 with bar = 122 which saw: -- moved)
     // y; // <- x // destruct Foo 0 with bar = 122 which saw: move= [0 -> (2)0]
     // x; // (destruct Foo 0 with bar = 122 which saw:  -- moved)
 }
