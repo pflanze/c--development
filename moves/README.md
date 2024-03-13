@@ -41,6 +41,8 @@ Moves need the following:
   the original target is not called, yet its string seems to be freed
   (can't call the real destructor, `~Foo`, explicitly). Might be because on
   string assignment, string's move assignment overload does it.
+  
+  Does C++ call destructors on individual fields after running my `~Foo`?
 
 * When an object doesn't need to support moves, but owns resources, it
   should implement move overloads anyway and make them private? Or
