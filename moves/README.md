@@ -12,7 +12,7 @@ Moves need the following:
 - Such objects need to be option-like (a moved-from object needs to
   represent a "null-like" state so that when the destructor runs, it
   can skip running any action). (C++ follows a run-time move semantics
-  approach, hence need runtime information for this.)
+  approach, hence needs runtime information for this.)
 
 - Need both moving `operator=` and constructor overloads
 
