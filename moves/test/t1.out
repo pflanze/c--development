@@ -1,0 +1,30 @@
+construct Foo 0 with bar = 122
+--- auto y = x
+ { copy [0 -> 1] }
+--- y = x
+destruct Foo 1 with bar = 122 which saw: copy [0 -> 1]
+ { copy= [0 -> (1)2] }
+ { copy [0 -> 3] }
+ { copy [0 -> 4] }
+--- y = std::move(x)
+destruct Foo 2 with bar = 122 which saw: copy= [0 -> (1)2]
+ { move= [0 -> (2)0] }
+ { move [3 -> 3] }
+3
+--- auto z = std::move(x3)
+ { move [4 -> 4] }
+ { copy [4 -> 5] }
+5
+0
+4
+z == z0:  { == (4, 5) }
+0
+z == z:  { == (4, 4) }
+1
+destruct Foo 5 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], copy [4 -> 5]
+destruct Foo 4 with bar = 122 which saw: copy [0 -> 4], move [4 -> 4], == (4, 5), == (4, 4)
+destruct Foo 3 with bar = 122 which saw: copy [0 -> 3], move [3 -> 3]
+(destruct Foo 4 with bar = 122 which saw: copy [0 -> 4] -- moved)
+(destruct Foo 3 with bar = 122 which saw: copy [0 -> 3] -- moved)
+destruct Foo 0 with bar = 122 which saw: move= [0 -> (2)0]
+(destruct Foo 0 with bar = 122 which saw:  -- moved)
