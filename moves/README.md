@@ -24,13 +24,13 @@ Moves need the following:
 
 - Can/should assert at runtime that an object is only moved-from once.
 
-- Obviously copy data *before* mutating it if the mutation concerns
-  the target object.
+- Need to transfer all fields explicitly in the custom
+  implementations, and not to forget to do so with `std::move`.
 
 ## Random details
 
-- Need to transfer all fields explicitly in the custom
-  implementations, and not to forget to do so with `std::move`.
+- In copy operations, obviously copy data *before* mutating it if the
+  mutation concerns the target object.
 
 - Assignment overloads should return a (normal) reference to the
   assigned-to location (`*this`) for chaining (e.g. `auto a = b = c;`).
