@@ -46,6 +46,10 @@ Moves need the following:
   should implement move overloads anyway and make them private? Or
   what is the solution to prevent accidental copies?
 
+* When an object should support moves and owns resources, but doesn't
+  need to do anything than have all fields moved, does it still need
+  to implement 5, or 0 since the default implementations are fine?
+
 * Read [What is the copy-and-swap idiom](https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom)
   on the topic of "avoiding code duplication, and providing a strong
   exception guarantee" (another solution to the `destruct` method
